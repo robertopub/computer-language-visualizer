@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contador interativo que mostra como caracteres humanos são representados em binário, decimal, octal, hexadecimal, ASCII e Unicode." />
+  <title>Da Linguagem Humana ao Computador</title>
+  <style>
+    :root {
+      --bg: #08111f;
+      --panel: #101c2f;
+      --panel-2: #14243b;
+      --text: #eef5ff;
+      --muted: #9fb0c7;
+      --accent: #65e6a5;
+      --accent-2: #ffd166;
+      --danger: #ff7b7b;
+      --border: #2a4161;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(40,90,150,.26), transparent 32rem),
+        linear-gradient(135deg, #07101c, #0a1728 55%, #08111f);
+    }
+
+    button, input, select { font: inherit; }
+
+    .container {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .flow {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    .flow span {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(20,36,59,.97), rgba(11,24,41,.97));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .main-card { padding: clamp(18px, 4vw, 32px); }
+    .side-card { padding: 24px; }
+
+    .section-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    .character-display {
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+      margin: 10px 0 16px;
+      background: #050a12;
+      border: 1px solid #304766;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    #character {
+      font-family: "Courier New", monospace;
+      font-size: clamp(4.8rem, 15vw, 9rem);
+      font-weight: 900;
+      color: var(--accent);
+      text-shadow: 0 0 28px rgba(101,230,165,.26);
+      line-height: 1;
+      text-align: center;
+      padding: 10px;
+    }
+
+    #character.control {
+      font-size: clamp(1.7rem, 5vw, 3rem);
+      color: var(--accent-2);
+    }
+
+    .binary-wrap {
+      margin-top: 20px;
+    }
+
+    .bits {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .bit {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1 / 1.12;
+      min-width: 0;
+      border-radius: 12px;
+      border: 1px solid #375274;
+      background: #060b13;
+      color: #7890ad;
+      font-family: "Courier New", monospace;
+      font-size: clamp(1.4rem, 4.8vw, 2.7rem);
+      font-weight: 900;
+      transition: transform .16s ease, background .16s ease, color .16s ease, border-color .16s ease;
+    }
+
+    .bit.on {
+      background: #123c2c;
+      color: #7ff2b5;
+      border-color: #49c88b;
+      box-shadow: inset 0 0 18px rgba(101,230,165,.13);
+    }
+
+    .bit.changed {
+      transform: translateY(-6px);
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+    }
+
+    .weights {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-top: 7px;
+      color: var(--muted);
+      text-align: center;
+      font-size: clamp(.68rem, 2vw, .9rem);
+    }
+
+    .representations {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .representation {
+      background: rgba(3,9,17,.45);
+      border: 1px solid #29415e;
+      border-radius: 15px;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .representation strong {
+      display: block;
+      margin-top: 5px;
+      font-family: "Courier New", monospace;
+      font-size: clamp(1.15rem, 3vw, 1.65rem);
+      overflow-wrap: anywhere;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1.7fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 15px 16px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .1s ease, filter .18s ease;
+    }
+
+    button:hover { filter: brightness(1.1); }
+    button:active { transform: scale(.97); }
+
+    .primary {
+      background: linear-gradient(#ffe27c, #e8af17);
+      color: #241b00;
+      box-shadow: 0 6px 0 #8c6807;
+    }
+
+    .secondary {
+      background: #314866;
+      color: white;
+    }
+
+    .danger {
+      background: #733746;
+      color: white;
+    }
+
+    .input-group {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    input {
+      min-width: 0;
+      border-radius: 12px;
+      border: 1px solid #385271;
+      background: #07101c;
+      color: white;
+      padding: 13px 14px;
+      outline: none;
+    }
+
+    input:focus { border-color: var(--accent); }
+
+    .message {
+      margin-top: 18px;
+      padding: 16px;
+      border-left: 5px solid var(--accent-2);
+      border-radius: 12px;
+      background: rgba(5,10,18,.58);
+      line-height: 1.6;
+      color: #dfeaff;
+    }
+
+    .message strong { color: var(--accent-2); }
+
+    .side-card h2 {
+      margin: 5px 0 16px;
+      font-size: 1.4rem;
+    }
+
+    .table-scroll {
+      max-height: 690px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Courier New", monospace;
+      font-size: .87rem;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: #1a2c47;
+      z-index: 1;
+    }
+
+    th, td {
+      padding: 10px 9px;
+      border-bottom: 1px solid #243b58;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      cursor: pointer;
+    }
+
+    tbody tr:hover,
+    tbody tr.active {
+      background: rgba(101,230,165,.12);
+    }
+
+    .note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: 26px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: 1fr; }
+      .table-scroll { max-height: 420px; }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(100% - 18px, 1180px); padding-top: 18px; }
+      .main-card, .side-card { border-radius: 18px; }
+      .main-card { padding: 15px; }
+      .bits, .weights { gap: 4px; }
+      .bit { border-radius: 8px; }
+      .representations { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: 1fr; }
+      .primary { order: -1; }
+      .input-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Da Linguagem Humana ao Computador</h1>
+      <p class="subtitle">
+        Conte de 0 a 127 e veja como o mesmo valor pode ser interpretado como número,
+        byte, caractere ASCII e código Unicode.
+      </p>
+      <div class="flow" aria-label="Fluxo da informação">
+        <span>Humano</span><span>→</span><span>Teclado</span><span>→</span>
+        <span>Código</span><span>→</span><span>Bits</span><span>→</span><span>Computador</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card main-card">
+        <div class="section-label">Caractere interpretado</div>
+        <div class="character-display">
+          <div id="character" aria-live="polite">NUL</div>
+        </div>
+
+        <div class="binary-wrap">
+          <div class="section-label">Byte em binário</div>
+          <div id="bits" class="bits"></div>
+          <div id="weights" class="weights"></div>
+        </div>
+
+        <div class="representations">
+          <div class="representation">
+            <span class="section-label">Decimal · base 10</span>
+            <strong id="decimal">0</strong>
+          </div>
+          <div class="representation">
+            <span class="section-label">Binário · base 2</span>
+            <strong id="binary">00000000</strong>
+          </div>
+          <div class="representation">
+            <span class="section-label">Octal · base 8</span>
+            <strong id="octal">000</strong>
+          </div>
+          <div class="representation">
+            <span class="section-label">Hexadecimal · base 16</span>
+            <strong id="hex">00</strong>
+          </div>
+          <div class="representation">
+            <span class="section-label">ASCII</span>
+            <strong id="asciiName">NUL</strong>
+          </div>
+          <div class="representation">
+            <span class="section-label">Unicode</span>
+            <strong id="unicode">U+0000</strong>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="previous" class="secondary" type="button">−1</button>
+          <button id="next" class="primary" type="button">CONTAR +1</button>
+          <button id="reset" class="danger" type="button">Zerar</button>
+        </div>
+
+        <div class="input-group">
+          <label for="humanInput" class="section-label">Digite uma letra, número ou símbolo</label>
+          <div class="input-row">
+            <input id="humanInput" maxlength="1" placeholder="Ex.: A" autocomplete="off" />
+            <button id="translate" class="secondary" type="button">Traduzir para bits</button>
+          </div>
+        </div>
+
+        <div id="message" class="message">
+          O valor <strong>0</strong> corresponde ao código de controle
+          <strong>NUL</strong>. Ele não aparece como uma letra visível.
+        </div>
+      </section>
+
+      <aside class="card side-card">
+        <div class="section-label">Tabela de referência</div>
+        <h2>ASCII de 0 a 127</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Dec</th>
+                <th>Hex</th>
+                <th>Binário</th>
+                <th>Caractere</th>
+              </tr>
+            </thead>
+            <tbody id="asciiTable"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          ASCII clássico usa 7 bits e possui 128 códigos, de 0 a 127.
+          Nesta página, cada código é exibido dentro de um byte de 8 bits,
+          por isso há um zero inicial.
+        </p>
+      </aside>
+    </main>
+
+    <footer>
+      Projeto educacional: uma mesma sequência de bits pode receber diferentes interpretações.
+    </footer>
+  </div>
+
+  <script>
+    const ASCII_CONTROL_NAMES = [
+      "NUL","SOH","STX","ETX","EOT","ENQ","ACK","BEL",
+      "BS","TAB","LF","VT","FF","CR","SO","SI",
+      "DLE","DC1","DC2","DC3","DC4","NAK","SYN","ETB",
+      "CAN","EM","SUB","ESC","FS","GS","RS","US"
+    ];
+
+    const CONTROL_DESCRIPTIONS = {
+      0: "caractere nulo",
+      7: "sinal sonoro",
+      8: "retrocesso",
+      9: "tabulação horizontal",
+      10: "quebra de linha",
+      13: "retorno de carro",
+      27: "escape",
+      32: "espaço em branco",
+      127: "delete"
+    };
+
+    const MAX_ASCII = 127;
+    let current = 0;
+    let previousBinary = "00000000";
+
+    const refs = {
+      character: document.getElementById("character"),
+      decimal: document.getElementById("decimal"),
+      binary: document.getElementById("binary"),
+      octal: document.getElementById("octal"),
+      hex: document.getElementById("hex"),
+      asciiName: document.getElementById("asciiName"),
+      unicode: document.getElementById("unicode"),
+      bits: document.getElementById("bits"),
+      weights: document.getElementById("weights"),
+      message: document.getElementById("message"),
+      table: document.getElementById("asciiTable"),
+      input: document.getElementById("humanInput")
+    };
+
+    function pad(value, size) {
+      return value.toString().padStart(size, "0");
+    }
+
+    function toBinary(value) {
+      return pad(value.toString(2), 8);
+    }
+
+    function toHex(value) {
+      return pad(value.toString(16).toUpperCase(), 2);
+    }
+
+    function toOctal(value) {
+      return pad(value.toString(8), 3);
+    }
+
+    function unicodeCode(value) {
+      return "U+" + pad(value.toString(16).toUpperCase(), 4);
+    }
+
+    function visibleCharacter(value) {
+      if (value === 32) return "ESPAÇO";
+      if (value === 127) return "DEL";
+      if (value < 32) return ASCII_CONTROL_NAMES[value];
+      return String.fromCharCode(value);
+    }
+
+    function asciiLabel(value) {
+      if (value < 32) return ASCII_CONTROL_NAMES[value];
+      if (value === 32) return "SPACE";
+      if (value === 127) return "DEL";
+      return String.fromCharCode(value);
+    }
+
+    function isControl(value) {
+      return value < 32 || value === 127 || value === 32;
+    }
+
+    function buildBits() {
+      refs.bits.innerHTML = "";
+      refs.weights.innerHTML = "";
+
+      for (let position = 7; position >= 0; position--) {
+        const bit = document.createElement("div");
+        bit.className = "bit";
+        bit.dataset.index = String(7 - position);
+        bit.textContent = "0";
+        refs.bits.appendChild(bit);
+
+        const weight = document.createElement("div");
+        weight.textContent = String(2 ** position);
+        refs.weights.appendChild(weight);
+      }
+    }
+
+    function explanation(value) {
+      const binary = toBinary(value);
+      const label = asciiLabel(value);
+      const description = CONTROL_DESCRIPTIONS[value];
+
+      if (description) {
+        return `O decimal <strong>${value}</strong> vira <strong>${binary}</strong> em binário.
+          Na tabela ASCII, esse código representa <strong>${label}</strong>, usado como ${description}.`;
+      }
+
+      if (value < 32 || value === 127) {
+        return `O decimal <strong>${value}</strong> vira <strong>${binary}</strong>.
+          Na tabela ASCII, ele é o código de controle <strong>${label}</strong>, e não uma letra visível.`;
+      }
+
+      return `O caractere humano <strong>${label}</strong> recebe o código decimal
+        <strong>${value}</strong>. Esse mesmo valor pode ser escrito como
+        <strong>${binary}</strong> em binário, <strong>${toOctal(value)}</strong> em octal
+        ou <strong>${toHex(value)}</strong> em hexadecimal.`;
+    }
+
+    function update(animated = true) {
+      const binary = toBinary(current);
+      refs.decimal.textContent = current;
+      refs.binary.textContent = binary;
+      refs.octal.textContent = toOctal(current);
+      refs.hex.textContent = toHex(current);
+      refs.asciiName.textContent = asciiLabel(current);
+      refs.unicode.textContent = unicodeCode(current);
+      refs.character.textContent = visibleCharacter(current);
+      refs.character.classList.toggle("control", isControl(current));
+      refs.message.innerHTML = explanation(current);
+
+      const bitElements = [...refs.bits.children];
+      bitElements.forEach((el, index) => {
+        const bit = binary[index];
+        el.textContent = bit;
+        el.classList.toggle("on", bit === "1");
+        el.classList.remove("changed");
+
+        if (animated && previousBinary[index] !== bit) {
+          requestAnimationFrame(() => el.classList.add("changed"));
+          setTimeout(() => el.classList.remove("changed"), 260);
+        }
+      });
+
+      previousBinary = binary;
+
+      [...refs.table.querySelectorAll("tr")].forEach(row => {
+        row.classList.toggle("active", Number(row.dataset.value) === current);
+      });
+
+      const activeRow = refs.table.querySelector(`tr[data-value="${current}"]`);
+      if (activeRow) activeRow.scrollIntoView({ block: "nearest" });
+    }
+
+    function increment() {
+      current = current >= MAX_ASCII ? 0 : current + 1;
+      update();
+    }
+
+    function decrement() {
+      current = current <= 0 ? MAX_ASCII : current - 1;
+      update();
+    }
+
+    function reset() {
+      current = 0;
+      update();
+    }
+
+    function translateInput() {
+      const text = refs.input.value;
+      if (!text) {
+        refs.message.innerHTML = "Digite um caractere para convertê-lo.";
+        refs.input.focus();
+        return;
+      }
+
+      const codePoint = text.codePointAt(0);
+      if (codePoint > MAX_ASCII) {
+        refs.message.innerHTML = `O caractere <strong>${text}</strong> não pertence ao ASCII clássico,
+          pois seu código Unicode é <strong>${unicodeCode(codePoint)}</strong>.
+          Esta primeira versão do contador percorre apenas os códigos ASCII de 0 a 127.`;
+        return;
+      }
+
+      current = codePoint;
+      update();
+    }
+
+    function buildTable() {
+      const fragment = document.createDocumentFragment();
+
+      for (let value = 0; value <= MAX_ASCII; value++) {
+        const row = document.createElement("tr");
+        row.dataset.value = value;
+        row.innerHTML = `
+          <td>${value}</td>
+          <td>${toHex(value)}</td>
+          <td>${toBinary(value)}</td>
+          <td>${asciiLabel(value)}</td>
+        `;
+        row.addEventListener("click", () => {
+          current = value;
+          update();
+        });
+        fragment.appendChild(row);
+      }
+
+      refs.table.appendChild(fragment);
+    }
+
+    document.getElementById("next").addEventListener("click", increment);
+    document.getElementById("previous").addEventListener("click", decrement);
+    document.getElementById("reset").addEventListener("click", reset);
+    document.getElementById("translate").addEventListener("click", translateInput);
+
+    refs.input.addEventListener("keydown", event => {
+      if (event.key === "Enter") translateInput();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (document.activeElement === refs.input) return;
+      if (event.key === "ArrowRight" || event.key === "ArrowUp" || event.key === " ") {
+        event.preventDefault();
+        increment();
+      }
+      if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+        event.preventDefault();
+        decrement();
+      }
+      if (event.key.toLowerCase() === "r") reset();
+    });
+
+    buildBits();
+    buildTable();
+    update(false);
+  </script>
+</body>
+</html>
