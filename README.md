@@ -1,112 +1,91 @@
 # Computer Language Visualizer
 
-> Uma ferramenta educacional para visualizar como um computador interpreta a linguagem humana.
+Uma ferramenta interativa para visualizar como o computador representa informações internamente.
 
-## Sobre o projeto
-
-O **Computer Language Visualizer** nasceu com um objetivo simples:
-
-> Mostrar, de forma visual e intuitiva, como um computador transforma letras, números e símbolos em sequências de bits.
-
-Ao pressionar uma tecla no teclado, o computador não "enxerga" uma letra. Ele recebe um código numérico, que pode ser representado em diferentes bases (binária, octal, decimal e hexadecimal) e armazenado como uma sequência de 0 e 1.
-
-Este projeto busca tornar esse processo fácil de entender para estudantes, professores e pessoas que estão iniciando na Computação.
+🌐 **Acesse a aplicação**
+https://robertopub.github.io/computer-language-visualizer/
 
 ---
 
-## O que a aplicação mostra
+# O que é a linguagem computacional?
 
-Para cada caractere ASCII, a ferramenta apresenta simultaneamente:
+Computadores não entendem letras, palavras ou imagens da mesma forma que nós.
 
-- ✅ Caractere humano
-- ✅ Código ASCII
-- ✅ Código Unicode
-- ✅ Decimal (Base 10)
-- ✅ Binário (Base 2)
-- ✅ Octal (Base 8)
-- ✅ Hexadecimal (Base 16)
-- ✅ Representação dos 8 bits
-- ✅ Valor posicional de cada bit
-- ✅ Explicação automática sobre o código selecionado
+Toda informação precisa ser convertida para uma representação que o hardware consiga armazenar e processar.
 
----
+Por isso, um simples caractere pode ser representado de diversas formas:
 
-## Objetivo
+- ASCII
+- Unicode
+- Decimal
+- Binário
+- Octal
+- Hexadecimal
 
-Este projeto não pretende apenas ensinar **binário**.
+Essas representações permitem que textos, números, imagens, sons e vídeos sejam armazenados e interpretados pelo computador.
 
-O objetivo é responder à pergunta:
-
-> **"Como o computador entende aquilo que nós digitamos?"**
-
-A ideia é criar uma ponte entre a linguagem humana e a linguagem da máquina.
+O objetivo deste projeto é tornar esse processo visual, intuitivo e fácil de compreender.
 
 ---
 
-## Funcionalidades atuais
+# Funcionalidades
 
-- Contador ASCII (0–127)
-- Conversão automática entre bases numéricas
-- Conversão de caracteres para seus códigos
-- Navegação por teclado
-- Explicação dinâmica do código selecionado
-- Visualização individual de cada bit
-
----
-
-## Próximas etapas
-
-O projeto continuará evoluindo para incluir:
-
-- Texto → Bits
-- Unicode e UTF-8
-- Formação de palavras
-- Como imagens são representadas (RGB)
-- Como pixels formam fotografias
-- Como o áudio é armazenado
-- Como vídeos são representados
-- Organização da memória
-- Bytes, KB, MB e GB
-- Funcionamento básico da CPU
-
-O objetivo final é construir uma ferramenta capaz de mostrar, de forma visual, como um computador representa praticamente qualquer tipo de informação.
+- Conversão entre caracteres e códigos
+- Visualização em ASCII
+- Visualização em Unicode
+- Conversão para Decimal
+- Conversão para Binário
+- Conversão para Octal
+- Conversão para Hexadecimal
+- Visualização dos bits
+- Explicação automática das representações
 
 ---
 
-## Como executar
+# Público-alvo
 
-Basta abrir o arquivo **index.html** em qualquer navegador moderno.
+Este projeto foi desenvolvido para estudantes de:
 
-Ou acessar a versão online:
+- Ciência da Computação
+- Sistemas de Informação
+- Engenharia de Software
+- Análise e Desenvolvimento de Sistemas
+- Cursos técnicos de Informática
+- Programação em geral
 
-**https://robertopub.github.io/computer-language-visualizer/**
-
----
-
-## Controles
-
-| Ação | Função |
-|------|--------|
-| CONTAR +1 | Próximo código ASCII |
-| −1 | Código anterior |
-| Zerar | Retorna ao código 0 |
-| Setas do teclado | Navegação |
-| Barra de espaço | Próximo código |
-| R | Reinicia o contador |
-| Digitar um caractere | Traduz diretamente para seu código |
+Também pode ser utilizado por qualquer pessoa curiosa sobre como os computadores representam informações.
 
 ---
 
-## Tecnologias
+# Tecnologias
 
 - HTML5
 - CSS3
-- JavaScript (Vanilla)
+- JavaScript
 
 ---
 
-## Licença
+# Próximas versões
 
-Projeto desenvolvido para fins educacionais.
+O projeto continuará evoluindo para explicar visualmente outros conceitos fundamentais da Computação, como:
 
-Contribuições, sugestões e melhorias são bem-vindas.
+- Bytes e memória
+- UTF-8 e UTF-16
+- Pixels e RGB
+- Imagens digitais
+- Áudio digital
+- Vídeo digital
+- Estruturas de armazenamento
+- Representação de arquivos
+
+---
+
+# Experimente
+
+Acesse gratuitamente:
+
+👉 https://robertopub.github.io/computer-language-visualizer/
+
+---
+
+Contribuições, sugestões e feedbacks são sempre bem-vindos.
